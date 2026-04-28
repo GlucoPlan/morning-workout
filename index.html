@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Зарядка</title>
+  <title>Утренняя зарядка</title>
   <style>
     * { box-sizing: border-box; }
     body { margin: 0; background: #0d0d0d; color: #fff; font-family: system-ui, -apple-system, sans-serif; height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; }
     #screen { text-align: center; width: 100%; padding: 20px; }
     #phase { font-size: 3vw; opacity: 0.6; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 2px; }
     #name { font-size: 6vw; margin: 10px 0 20px; font-weight: 700; }
-    #media { width: 80vw; max-width: 900px; height: 50vh; object-fit: contain; background: #1a1a1a; border-radius: 16px; box-shadow: 0 0 40px rgba(0,0,0,0.5); }
+    #media { width: 80vw; max-width: 900px; height: 50vh; object-fit: contain; background: #1a1a1a; border-radius: 16px; }
     #timer { font-size: 10vw; font-weight: 800; margin-top: 20px; font-variant-numeric: tabular-nums; }
     #btn { padding: 25px 50px; font-size: 4vw; background: #2563eb; color: #fff; border: none; border-radius: 12px; cursor: pointer; transition: 0.2s; }
     #btn:hover { background: #1d4ed8; transform: scale(1.05); }
@@ -20,7 +20,7 @@
 <body>
   <div id="screen">
     <div id="start">
-      <h1 style="font-size: 7vw; margin-bottom: 40px;">Утренняя зарядка</h1>
+      <h1 style="font-size: 7vw; margin-bottom: 40px;">Утренняя зарядка (20 мин)</h1>
       <button id="btn" onclick="run()">▶ Начать</button>
     </div>
     <div id="workout" class="hidden">
@@ -32,14 +32,18 @@
   </div>
 
   <script>
-    // 👇 РЕДАКТИРУЙ ЗДЕСЬ: свои упражнения, время, отдых, ссылки на GIF/картинки
+    // ⚡ Данные из твоего PDF (время адаптировано под таймер)
     const EXERCISES = [
-      { name: "Приседания", work: 30, rest: 10, img: "https://i.gifer.com/origin/34/34f3c41c3c5695d0a0c4e5f8f8b5d6b0_w200.gif" },
-      { name: "Отжимания", work: 25, rest: 15, img: "https://i.gifer.com/origin/7d/7d3b9e8c8a0f5b8c7a4e6f3d2b1a0c9b_w200.gif" },
-      { name: "Планка",    work: 40, rest: 10, img: "https://i.gifer.com/origin/8e/8e4a7f6d5c3b2a1e0f9d8c7b6a5f4e3d_w200.gif" }
+      { name: "Супермен", work: 25, rest: 10, img: "images/superman.jpg" },
+      { name: "Ягодичный мост", work: 30, rest: 10, img: "images/bridge.jpg" },
+      { name: "Планка", work: 60, rest: 15, img: "images/plank.jpg" },
+      { name: "Кошка-корова", work: 50, rest: 10, img: "images/cowcat.jpg" },
+      { name: "Птица-собака", work: 40, rest: 10, img: "images/birddog.jpg" },
+      { name: "Сведение лопаток у стены", work: 30, rest: 10, img: "images/wall.jpg" },
+      { name: "Заминка: Колени к груди", work: 120, rest: 0, img: "images/stretch.jpg" }
     ];
 
-    let idx = 0, isRest = false, interval;
+    let idx = 0, interval;
 
     function run() {
       document.getElementById('start').classList.add('hidden');
@@ -49,21 +53,21 @@
 
     function next() {
       if (idx >= EXERCISES.length) return finish();
-      isRest = false;
       const ex = EXERCISES[idx];
       document.getElementById('phase').textContent = 'Работа';
       document.getElementById('name').textContent = ex.name;
       document.getElementById('media').src = ex.img;
+      document.getElementById('media').style.display = 'block';
+      
       countdown(ex.work, () => {
-        isRest = true;
-        document.getElementById('phase').textContent = 'Отдых';
-        document.getElementById('name').textContent = 'Дышим...';
-        document.getElementById('media').style.display = 'none';
-        countdown(ex.rest, () => {
-          document.getElementById('media').style.display = 'block';
-          idx++;
-          next();
-        });
+        if (ex.rest > 0) {
+          document.getElementById('phase').textContent = 'Отдых';
+          document.getElementById('name').textContent = 'Дышим...';
+          document.getElementById('media').style.display = 'none';
+          countdown(ex.rest, () => { idx++; next(); });
+        } else {
+          finish();
+        }
       });
     }
 
